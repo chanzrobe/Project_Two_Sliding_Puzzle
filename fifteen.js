@@ -5,7 +5,7 @@ this.shuffled = false;
 this.match = false;
 
 function Start(){
-	var puzzle = document.getElementById("puzzlearea");
+	this.puzzle = document.getElementById("puzzlearea");
 	this.pieces = puzzle.getElementsByTagName("div");
 	for (i=0; i<pieces.length; i++){
 		pieces[i].className = "puzzlepiece";
@@ -21,7 +21,6 @@ function Start(){
 		unsolved.push(new Object(puzzlepieces[i]));
 		solved.push(new Object(puzzlepieces[i]));
 	}
-	function TileDown(unsolved[15], unsolved[6]);
 }
 
 function UnShuffled(){
@@ -58,19 +57,15 @@ function setBoard(array){
 		}}
 }
 
-function ReadyToPlay(unsortedPuzzle){
-	if(shuffled === true){
-		setBoard(unsortedPuzzle);  //set the board with the unsorted tiles
-		checkWinner();
-		while(match !== true){
-			unsortedPuzzle.click(function(){
-				var postion = unsortedPuzzle.indexOf($(this));
-				var tile = unsortedPuzzle[position];
-				TileMove(tile);
-				}
-			checkWinner();
-		}}}
-
+function ReadyToPlay(){
+	match = checkWinner();
+	if (match === false){
+		tile = this;//unsolved[position];
+		alert("showing tile " +tile);
+		//match = checkWinner();
+		TileMove(tile);
+	}}
+		
 function Shuffled(){
 	unsolved.sort(randOrder);
 	var nSum = 0;
@@ -90,7 +85,10 @@ function Shuffled(){
 					needSwap=false;}
 			}}}
 	shuffled = true;
-	ReadyToPlay(unsolved);
+	setBoard(unsolved);  //set the board with the unsorted tiles
+	for (i=0; i < unsolved.length; i++){
+		unsolved[i].onclick = ReadyToPlay;
+		}
 }
 
 function randOrder(){
@@ -99,34 +97,33 @@ function randOrder(){
 
 function TileMove(tile){
 	this.blank = document.getElementById("blank");
-	alert(blank.style.top);
-	if(shuffled){
-		if((parseInt(tile.style.bottom)) === (parseInt(blank.style.top))){
-			Movable(tile);
-			tile.onclick = TileDown(tile, blank);
-		}else if((parseInt(tile.style.top)) === (parseInt(blank.style.bottom))){
-			Movable(tile);
-			tile.onclick = TileUp(tile, blank);
-		}else if(tile.style.left === blank.style.right){
-			Movable(tile)
-			tile.onclick = TileRight(tile, blank);
-		}else if(tile.style.right === blank.style.left){
-			Movable(tile)
-			tile.onclick = TileLeft(tile, blank);		
-		}
-	}else{ alert("Click the shuffle button.");}
+	alert("tile " + tile.style.bottom)
+	alert("blank top is "+blank.style.bottom);
+	if((parseInt(tile.style.bottom)-100) === (parseInt(blank.style.bottom))){
+		Movable(tile);
+		tile.onclick = TileDown(tile);
+	}else if((parseInt(tile.style.bottom)+100) === (parseInt(blank.style.bottom))){
+		Movable(tile);
+		tile.onclick = TileUp(tile);
+	}else if((parseInt(tile.style.left)-100) === (parseInt(blank.style.left))){
+		Movable(tile)
+		tile.onclick = TileRight(tile);
+	}else if((parseInt(tile.style.left)+100) === (parseInt(blank.style.left))){
+		Movable(tile)
+		tile.onclick = TileLeft(tile);		
+	}
 }
 
 function Movable(tile){
 	tile.className = "movablepiece";
 }
 
-function TileDown(tile, blank){ //moves tile down
+function TileDown(tile){ //moves tile down
 	tile.style.bottom = (parseInt(tile.style.bottom) - 100) +"px";
 	blank.style.bottom = (parseInt(blank.style.bottom) + 100) +"px";
 }
 
-function TileUp(tile, blank){ //moves tile up
+function TileUp(tile){ //moves tile up
 	tile.style.bottom = (parseInt(tile.style.bottom) + 100) +"px";
 	blank.style.bottom = (parseInt(blank.style.bottom) - 100) +"px";
 }
@@ -136,19 +133,23 @@ function TileLeft(tile, blank){ //moves tile left
 	blank.style.left = (parseInt(blank.style.left) + 100) +"px";
 }
 
-function TileRight(tile, blank){ //moves tile right
+function TileRight(tile){ //moves tile right
 	tile.style.left = (parseInt(tile.style.left) + 100) +"px";
 	blank.style.left = (parseInt(blank.style.left) - 100) +"px";
 }
 
-function checkWinner(){  
-	alert("Winner checked");
-	for(var i=0; i<unsolved.length; i++){
-		if(unsolved[i] != solved[i]){
-			match = false;}      //game not won   
-		else{
-			match = true;   //game won
-			console.log('puzzle complete!');
-			var body = document.getElementByTagName('body')
-			body.style.backgroundImage = "url(https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTro_my883-cb88z7-3TJ9rPUwOGCA8OvSmeY6CF13nG-JiB7E-wA)";}
+function checkWinner(){
+	i=0;
+	while(i< unsolved.length){
+	//for(var i=0; i<=unsolved.length; i++){
+		alert("enter the loop, checking " + unsolved[i] +" and "+solved[i])
+		if(unsolved[i]!== solved[i]){
+			alert("they are not equal")
+			return false;
+			break;
+		}
+	return true;     //game won
+	alert('puzzle complete!');
+	//var winner = document.getElementById("puzzlearea");
+	//puzzle.style.backgroundImage = "url(https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTro_my883-cb88z7-3TJ9rPUwOGCA8OvSmeY6CF13nG-JiB7E-wA)";
 	}}
